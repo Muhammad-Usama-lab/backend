@@ -4,7 +4,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   console.log(req.url)
   res.status(200).json({
     message: "Running",
