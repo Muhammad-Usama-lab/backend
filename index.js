@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 app.get("/api", (req, res) => {
-  console.log(req.url);
+  console.log(req?.baseUrl);
   res.status(200).json({
     message: "Running",
   });
