@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const AWS = require("aws-sdk");
+const sharp = require("sharp");
 
 const s3 = new AWS.S3({
   credentials: {
@@ -8,21 +9,28 @@ const s3 = new AWS.S3({
     secretAccessKey: process.env.SECRET_KEY,
   },
 });
+
 const uploadImages = (req, res, next) => {
   try {
+    const imagePaths = [];
     // "Location": "https://darzi-app.s3-ap-southeast-2.amazonaws.com/customers/1678291998840",
-
+    console.log(req.files?.length);
     if (req.files && req.files.length > 0) {
       const images = req.files?.map((file) => {
         return { ...file };
       });
 
-      const imagePaths = [];
       images.forEach(async (element) => {
+        let compressedImage = await sharp(element.buffer)
+          .resize({ width: 800 })
+          .toFormat("jpeg")
+          .jpeg({ quality: 90 })
+          .toBuffer();
+
         const upload = {
-          Bucket: "darzi-app",
-          Key: `customers/${new Date().getTime()}`,
-          Body: element?.buffer,
+          Bucket: "darziapp",
+          Key: `customers/${element.originalname}`,
+          Body: compressedImage,
           ContentType: element.mimetype,
           ACL: "public-read",
         };
@@ -34,7 +42,7 @@ const uploadImages = (req, res, next) => {
             throw error;
           } else {
             imagePaths.push(success?.key);
-            if (imagePaths.length === images.length) {
+            if (imagePaths?.length === images.length) {
               req.images = imagePaths;
               next();
             }
@@ -45,6 +53,7 @@ const uploadImages = (req, res, next) => {
       next();
     }
   } catch (error) {
+    console.log('error at uploadImage', error)
     res.status(500).json({
       message: `${error}`,
     });

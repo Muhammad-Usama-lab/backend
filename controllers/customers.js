@@ -4,7 +4,12 @@ const customers = require("../models/customers");
 
 const getAll = async (req, res) => {
   try {
-    let custs = await customers.find({});
+    let { name } = req.query;
+    console.log(name);
+    let custs = await customers.find({
+      first_name: { $regex: name || "", $options: "i" },
+    });
+    console.log(custs);
     res.status(200).json(custs);
   } catch (error) {
     res.status(500).json({ message: `${error}` });
@@ -43,17 +48,22 @@ const updateCustomer = async (req, res) => {
 
 // create
 const addCustomer = async (req, res) => {
+
   try {
-    let { first_name, last_name, size, phone_number, phone_number_2 } =
+    console.log('req.body', req.body);
+
+    let { first_name, last_name, size, phone_number, phone_number_2, sku } =
       req.body;
 
     let customer = await customers.create({
       first_name,
       last_name,
       size,
+      sku,
       phone_number,
       phone_number_2,
-      image: req?.images ? req?.images[0] : null,
+      preferences:req?.images ? req?.images?.find(v=>!v?.split("_").includes("Customer")) : null,
+      image: req?.images ? req?.images?.find(v=>v?.split("_").includes("Customer")) : null,
     });
     if (customer) res.status(200).json(customer);
   } catch (error) {

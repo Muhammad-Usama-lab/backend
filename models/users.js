@@ -5,9 +5,10 @@ const user = Schema(
   {
     first_name: { type: Schema.Types.String, required: true },
     last_name: String,
-    user_name: {
+    username: {
       required: true,
       type: Schema.Types.String,
+      unique:true 
     },
     image: String,
     password: {

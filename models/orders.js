@@ -6,6 +6,7 @@ const order = Schema(
     total_amount: { required: true, type: Schema.Types.Number },
     delivery_date: { type: Schema.Types.Date, required: true },
     attachments: [],
+    products: [],
     createdBy: {
       ref: "users",
       type: Schema.Types.ObjectId,
@@ -17,7 +18,7 @@ const order = Schema(
     type: String,
     status: String,
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 const orders = mongoose.model("orders", order);

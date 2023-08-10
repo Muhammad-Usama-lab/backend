@@ -12,10 +12,12 @@ const customer = Schema(
     },
     last_name: String,
     image: String,
+    preferences: [],
+    sku: String,
     phone_number: String,
     phone_number_optional: String,
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 const customers = mongoose.model("customers", customer);

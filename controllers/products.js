@@ -4,9 +4,14 @@ const products = require("../models/products");
 
 const getAll = async (req, res) => {
   try {
-    let prods = await products.find({});
+    let { title } = req.query;
+  
+    let prods = await products.find({
+      title: { $regex: title || "", $options: "i" },
+    });
     res.status(200).json(prods);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: `${error}` });
   }
 };
@@ -51,7 +56,6 @@ const addProduct = async (req, res) => {
       actual_price,
       selling_price,
       stock,
-      
     });
     if (product) res.status(200).json(product);
   } catch (error) {
